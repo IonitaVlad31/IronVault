@@ -7,10 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="SelectFileButton" Content="Select File" HorizontalAlignment="Left" Margin="332,50,0,0" VerticalAlignment="Top" Height="41" Width="112" FontSize="20" Click="SelectFileButton_Click"/>
-        <Label Content="Password:" HorizontalAlignment="Left" Margin="254,110,0,0" VerticalAlignment="Top" Width="134" FontSize="20"/>
-        <Button x:Name="GoButton" Content="Go!" HorizontalAlignment="Left" Height="42" Margin="325,175,0,0" VerticalAlignment="Top" Width="126" FontSize="20" Click="GoButton_Click"/>
-        <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" Height="42" Margin="353,110,0,0" VerticalAlignment="Top" Width="192" FontSize="20" VerticalContentAlignment="Center"/>
+        <Button x:Name="SelectFileButton" Content="Select File" HorizontalAlignment="Left" Margin="69,45,0,0" VerticalAlignment="Top" Height="41" Width="112" FontSize="20" Click="SelectFileButton_Click" RenderTransformOrigin="0.385,0.559" Background="#FF0BC95B"/>
+        <Label Content="Password:" HorizontalAlignment="Left" Margin="69,110,0,0" VerticalAlignment="Top" Width="112" FontSize="20" Background="#FF1FC1E5" HorizontalContentAlignment="Center"/>
+        <Button x:Name="GoButton" Content="Go!" HorizontalAlignment="Center" Height="86" Margin="0,217,0,0" VerticalAlignment="Top" Width="164" FontSize="48" Click="GoButton_Click" Background="#FF1BDFD1"/>
+        <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" Height="42" Margin="198,110,0,0" VerticalAlignment="Top" Width="192" FontSize="20" VerticalContentAlignment="Center"/>
+        <TextBox x:Name="FilePathTextBox" HorizontalAlignment="Left" Height="41" Margin="198,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="580" TextChanged="TextBox_TextChanged" FontSize="16" IsReadOnly="True" VerticalContentAlignment="Center"/>
 
     </Grid>
 </Window>

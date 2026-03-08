@@ -34,7 +34,7 @@ namespace IronVault
             if (openFileDialog.ShowDialog() == true)
             {
                 selectedFilePath = openFileDialog.FileName;
-                // TODO: afisam calea aleasa intr-un TextBox
+                FilePathTextBox.Text = selectedFilePath;
             }
         }
 
@@ -60,13 +60,13 @@ namespace IronVault
                 {
                     string outputFile = selectedFilePath.Replace(".vault", "");
                     CryptoEngine.DecryptFile(selectedFilePath, outputFile, password);
-                    MessageBox.Show("File decrypted successfully!", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"File decrypted successfully!\n\nSaved at:\n{outputFile}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
                     string outputFile = selectedFilePath + ".vault";
                     CryptoEngine.EncryptFile(selectedFilePath, outputFile, password);
-                    MessageBox.Show("File encypted successfully!", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"File encypted successfully!\n\nSaved at:\n{outputFile}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (CryptographicException)
@@ -77,6 +77,11 @@ namespace IronVault
             {
                 MessageBox.Show($"An error occured: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 }
