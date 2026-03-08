@@ -7,6 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Button x:Name="SelectFileButton" Content="Select File" HorizontalAlignment="Left" Margin="332,50,0,0" VerticalAlignment="Top" Height="41" Width="112" FontSize="20" Click="SelectFileButton_Click"/>
+        <Label Content="Password:" HorizontalAlignment="Left" Margin="254,110,0,0" VerticalAlignment="Top" Width="134" FontSize="20"/>
+        <Button x:Name="GoButton" Content="Go!" HorizontalAlignment="Left" Height="42" Margin="325,175,0,0" VerticalAlignment="Top" Width="126" FontSize="20" Click="GoButton_Click"/>
+        <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" Height="42" Margin="353,110,0,0" VerticalAlignment="Top" Width="192" FontSize="20" VerticalContentAlignment="Center"/>
 
     </Grid>
 </Window>

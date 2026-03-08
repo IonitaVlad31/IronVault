@@ -6,7 +6,7 @@ using System.Text;
 
 namespace IronVault
 {
-    class CryptoEngine
+    public static class CryptoEngine
     {
         private static readonly int SaltSize = 16;
         private static readonly int Iterations = 100000;
@@ -34,11 +34,11 @@ namespace IronVault
                         fsOut.Write(salt, 0, salt.Length);
                         fsOut.Write(iv, 0, iv.Length);
 
-                        using (CryptoStream cs = new CryptoStream(fsOut, aes.CreateDecryptor(), CryptoStreamMode.Write))
+                        using (CryptoStream cs = new CryptoStream(fsOut, aes.CreateEncryptor(), CryptoStreamMode.Write))
                         {
                             using (FileStream fsIn = new FileStream(inputFile, FileMode.Open))
                             {
-                                // TODO: citire din fsIn si scrie in cs
+                                fsIn.CopyTo(cs);
                             }
                         }
                     }
@@ -46,6 +46,33 @@ namespace IronVault
             }
         }
 
-        // TODO: functie de decriptare
+        public static void DecryptFile(string inputFile, string outputFile, string password)
+        {
+            using (FileStream fsIn = new FileStream(inputFile, FileMode.Open))
+            {
+                byte[] salt = new byte[SaltSize];
+                fsIn.Read(salt, 0, salt.Length);
+
+                using (Aes aes = Aes.Create())
+                {
+                    byte[] iv = new byte[aes.BlockSize / 8];
+                    fsIn.Read(iv, 0, iv.Length);
+                    aes.IV = iv;
+
+                    using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA256))
+                    {
+                        aes.Key = deriveBytes.GetBytes(32);
+
+                        using (CryptoStream cs = new CryptoStream(fsIn, aes.CreateDecryptor(), CryptoStreamMode.Read))
+                        {
+                            using (FileStream fsOut = new FileStream(outputFile, FileMode.Create))
+                            {
+                                cs.CopyTo(fsOut);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
