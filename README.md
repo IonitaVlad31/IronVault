@@ -37,6 +37,6 @@ As this is an actively developed project, the following features are planned for
 - [ ] **Password Strength Meter:** Real-time visual feedback on password complexity.
 
 ## How to Run locally
-1. Clone the repository: `git clone https://github.com/YourUsername/IronVault.git`
+1. Clone the repository: `git clone https://github.com/IonitaVlad31/IronVault.git`
 2. Open the solution `.sln` file in **Visual Studio**.
 3. Build and Run (F5).
