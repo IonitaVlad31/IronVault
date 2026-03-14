@@ -5,13 +5,108 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IronVault"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Button x:Name="SelectFileButton" Content="Select File" HorizontalAlignment="Left" Margin="69,45,0,0" VerticalAlignment="Top" Height="41" Width="112" FontSize="20" Click="SelectFileButton_Click" RenderTransformOrigin="0.385,0.559" Background="#FF0BC95B"/>
-        <Label Content="Password:" HorizontalAlignment="Left" Margin="69,110,0,0" VerticalAlignment="Top" Width="112" FontSize="20" Background="#FF1FC1E5" HorizontalContentAlignment="Center"/>
-        <Button x:Name="GoButton" Content="Go!" HorizontalAlignment="Center" Height="86" Margin="0,217,0,0" VerticalAlignment="Top" Width="164" FontSize="48" Click="GoButton_Click" Background="#FF1BDFD1"/>
-        <PasswordBox x:Name="PasswordBox" HorizontalAlignment="Left" Height="42" Margin="198,110,0,0" VerticalAlignment="Top" Width="192" FontSize="20" VerticalContentAlignment="Center"/>
-        <TextBox x:Name="FilePathTextBox" HorizontalAlignment="Left" Height="41" Margin="198,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="580" TextChanged="TextBox_TextChanged" FontSize="16" IsReadOnly="True" VerticalContentAlignment="Center"/>
+        Title="IronVault Security" Height="500" Width="800"
+        WindowStartupLocation="CenterScreen"
+        Background="WhiteSmoke">
 
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#005A9E"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#CCCCCC"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Border Background="DarkSlateGray" Padding="20">
+            <TextBlock Text="IRON VAULT" Foreground="White" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+        </Border>
+
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="600">
+            <TextBlock Text="Select File" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="DimGray"/>
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="FilePathTextBox" 
+                         Height="40" 
+                         FontSize="14" 
+                         VerticalContentAlignment="Center" 
+                         Padding="5"
+                         IsReadOnly="True" 
+                         TextChanged="TextBox_TextChanged"
+                         Background="White"
+                         BorderBrush="LightGray"
+                         BorderThickness="1"/>
+
+                <Button x:Name="SelectFileButton" 
+                        Content="..." 
+                        Grid.Column="1" 
+                        Width="50" 
+                        Height="40" 
+                        Margin="10,0,0,0" 
+                        Click="SelectFileButton_Click"
+                        ToolTip="Browse for file"/>
+            </Grid>
+
+            <TextBlock Text="Password" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="DimGray"/>
+            <PasswordBox x:Name="PasswordBox" 
+                         Height="40" 
+                         FontSize="16" 
+                         Padding="5"
+                         VerticalContentAlignment="Center"
+                         Margin="0,0,0,30"
+                         Background="White"
+                         BorderBrush="LightGray"
+                         BorderThickness="1"/>
+
+            <Button x:Name="GoButton" 
+                    Content="ENCRYPT / DECRYPT" 
+                    Height="60" 
+                    FontSize="18" 
+                    FontWeight="Bold"
+                    Click="GoButton_Click" 
+                    Background="MediumTurquoise" 
+                    Foreground="Black"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Margin="20">
+            <ProgressBar x:Name="EncryptionProgressBar" 
+                         Height="10" 
+                         Minimum="0" 
+                         Maximum="100" 
+                         Value="0" 
+                         Background="Gainsboro" 
+                         Foreground="DodgerBlue" 
+                         BorderThickness="0"/>
+        </StackPanel>
     </Grid>
 </Window>

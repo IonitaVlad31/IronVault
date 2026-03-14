@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace IronVault
 {
@@ -10,8 +9,9 @@ namespace IronVault
     {
         private static readonly int SaltSize = 16;
         private static readonly int Iterations = 100000;
+        private static readonly int BufferSize = 1024 * 1024;
 
-        public static void EncryptFile(string inputFile, string outputFile, string password)
+        public static async Task EncryptFileAsync(string inputFile, string outputFile, string password, IProgress<double> progress)
         {
             byte[] salt = new byte[SaltSize];
             using (var rng = RandomNumberGenerator.Create())
@@ -29,16 +29,16 @@ namespace IronVault
                     aes.GenerateIV();
                     byte[] iv = aes.IV;
 
-                    using (FileStream fsOut = new FileStream(outputFile, FileMode.Create))
+                    using (FileStream fsOut = new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None, BufferSize, true))
                     {
-                        fsOut.Write(salt, 0, salt.Length);
-                        fsOut.Write(iv, 0, iv.Length);
+                        await fsOut.WriteAsync(salt, 0, salt.Length);
+                        await fsOut.WriteAsync(iv, 0, iv.Length);
 
                         using (CryptoStream cs = new CryptoStream(fsOut, aes.CreateEncryptor(), CryptoStreamMode.Write))
                         {
-                            using (FileStream fsIn = new FileStream(inputFile, FileMode.Open))
+                            using (FileStream fsIn = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize, true))
                             {
-                                fsIn.CopyTo(cs);
+                                await CopyStreamWithProgressAsync(fsIn, cs, fsIn.Length, progress);
                             }
                         }
                     }
@@ -46,17 +46,17 @@ namespace IronVault
             }
         }
 
-        public static void DecryptFile(string inputFile, string outputFile, string password)
+        public static async Task DecryptFileAsync(string inputFile, string outputFile, string password, IProgress<double> progress)
         {
-            using (FileStream fsIn = new FileStream(inputFile, FileMode.Open))
+            using (FileStream fsIn = new FileStream(inputFile, FileMode.Open, FileAccess.Read, FileShare.Read, BufferSize, true))
             {
                 byte[] salt = new byte[SaltSize];
-                fsIn.Read(salt, 0, salt.Length);
+                await fsIn.ReadAsync(salt, 0, salt.Length);
 
                 using (Aes aes = Aes.Create())
                 {
                     byte[] iv = new byte[aes.BlockSize / 8];
-                    fsIn.Read(iv, 0, iv.Length);
+                    await fsIn.ReadAsync(iv, 0, iv.Length);
                     aes.IV = iv;
 
                     using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, Iterations, HashAlgorithmName.SHA256))
@@ -65,12 +65,30 @@ namespace IronVault
 
                         using (CryptoStream cs = new CryptoStream(fsIn, aes.CreateDecryptor(), CryptoStreamMode.Read))
                         {
-                            using (FileStream fsOut = new FileStream(outputFile, FileMode.Create))
+                            using (FileStream fsOut = new FileStream(outputFile, FileMode.Create, FileAccess.Write, FileShare.None, BufferSize, true))
                             {
-                                cs.CopyTo(fsOut);
+                                await CopyStreamWithProgressAsync(cs, fsOut, fsIn.Length, progress);
                             }
                         }
                     }
+                }
+            }
+        }
+
+        private static async Task CopyStreamWithProgressAsync(Stream source, Stream destination, long totalLength, IProgress<double> progress)
+        {
+            byte[] buffer = new byte[BufferSize];
+            long totalRead = 0;
+            int bytesRead;
+
+            while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                await destination.WriteAsync(buffer, 0, bytesRead);
+                totalRead += bytesRead;
+
+                if (totalLength > 0 && progress != null)
+                {
+                    progress.Report((double)totalRead / totalLength * 100);
                 }
             }
         }

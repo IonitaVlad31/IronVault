@@ -1,5 +1,7 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -38,7 +40,7 @@ namespace IronVault
             }
         }
 
-        private void GoButton_Click(object sender, RoutedEventArgs e)
+        private async void GoButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(selectedFilePath))
             {
@@ -54,18 +56,26 @@ namespace IronVault
                 return;
             }
 
+            GoButton.IsEnabled = false;
+            EncryptionProgressBar.Value = 0;
+
+            var progressHandler = new Progress<double>(value =>
+            {
+                EncryptionProgressBar.Value = value;
+            });
+
             try
             {
                 if (selectedFilePath.EndsWith(".vault"))
                 {
                     string outputFile = selectedFilePath.Replace(".vault", "");
-                    CryptoEngine.DecryptFile(selectedFilePath, outputFile, password);
+                    await CryptoEngine.DecryptFileAsync(selectedFilePath, outputFile, password, progressHandler);
                     MessageBox.Show($"File decrypted successfully!\n\nSaved at:\n{outputFile}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
                     string outputFile = selectedFilePath + ".vault";
-                    CryptoEngine.EncryptFile(selectedFilePath, outputFile, password);
+                    await CryptoEngine.EncryptFileAsync(selectedFilePath, outputFile, password, progressHandler);
                     MessageBox.Show($"File encypted successfully!\n\nSaved at:\n{outputFile}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
@@ -76,6 +86,11 @@ namespace IronVault
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occured: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                GoButton.IsEnabled = true;
+                EncryptionProgressBar.Value = 0;
             }
         }
 
