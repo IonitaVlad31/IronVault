@@ -91,6 +91,53 @@ namespace IronVault
             {
                 GoButton.IsEnabled = true;
                 EncryptionProgressBar.Value = 0;
+
+                FilePathTextBox.Text = string.Empty;
+                PasswordBox.Password = string.Empty;
+
+                selectedFilePath = "";
+            }
+        }
+
+        private void FilePathTextBox_PreviewDragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                FilePathTextBox.Background = Brushes.LightGray;
+            }
+        }
+
+        private void FilePathTextBox_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+            e.Handled = true;
+        }
+
+        private void FilePathTextBox_PreviewDragLeave(object sender, DragEventArgs e)
+        {
+            FilePathTextBox.Background = Brushes.White;
+        }
+
+        private void FilePathTextBox_Drop(object sender, DragEventArgs e)
+        {
+            FilePathTextBox.Background = Brushes.White;
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                if (files != null && files.Length > 0)
+                {
+                    selectedFilePath = files[0];
+                    FilePathTextBox.Text = selectedFilePath;
+                }
             }
         }
 
