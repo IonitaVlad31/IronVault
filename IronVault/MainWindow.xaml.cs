@@ -56,6 +56,22 @@ namespace IronVault
                 return;
             }
 
+            int currentScore = CalculatePasswordScore(password);
+
+            if (currentScore < 40)
+            {
+                MessageBoxResult result = MessageBox.Show(
+                    "Your password is weak. Do you want to proceed anyway?",
+                    "Weak Password Warning",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
+
             GoButton.IsEnabled = false;
             EncryptionProgressBar.Value = 0;
 
@@ -139,6 +155,112 @@ namespace IronVault
                     FilePathTextBox.Text = selectedFilePath;
                 }
             }
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            string password = PasswordBox.Password;
+            UpdatePasswordStrength(password);
+        }
+
+        private void UpdatePasswordStrength(string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                PasswordStrengthBar.Value = 0;
+                PasswordStrengthText.Text = "Enter a password";
+                PasswordStrengthText.Foreground = Brushes.DimGray;
+                PasswordStrengthBar.Foreground = Brushes.DimGray;
+                return;
+            }
+
+            int score = CalculatePasswordScore(password);
+            PasswordStrengthBar.Value = score;
+
+            if (score < 20)
+            {
+                PasswordStrengthBar.Foreground = Brushes.Red;
+                PasswordStrengthText.Text = "Very Weak password (Please introduce a minimum of 8 characters)";
+                PasswordStrengthText.Foreground = Brushes.Red;
+            }
+            else if (score < 40)
+            {
+                PasswordStrengthBar.Foreground = Brushes.DarkOrange;
+                PasswordStrengthText.Text = "Weak password (Add numbers/symbols/lowercase/uppercase)";
+                PasswordStrengthText.Foreground = Brushes.DarkOrange;
+            }
+            else if (score < 60)
+            {
+                PasswordStrengthBar.Foreground = Brushes.Gold;
+                PasswordStrengthText.Text = "Fair password (Add numbers/symbols/lowercase/uppercase for more safety)";
+                PasswordStrengthText.Foreground = Brushes.Gold;
+            }
+            else if (score < 90)
+            {
+                PasswordStrengthBar.Foreground = Brushes.LimeGreen;
+                PasswordStrengthText.Text = "Good password";
+                PasswordStrengthText.Foreground = Brushes.LimeGreen;
+
+            }
+            else
+            {
+                PasswordStrengthBar.Foreground = Brushes.ForestGreen;
+                PasswordStrengthText.Text = "Strong password!";
+                PasswordStrengthText.Foreground = Brushes.ForestGreen;
+            }
+        }
+
+        private int CalculatePasswordScore(string password)
+        {
+            if (string.IsNullOrEmpty(password)) return 0;
+
+            int score = 0;
+
+            score += Math.Min(50, password.Length * 6);
+
+            if (password.Length < 8)
+                score -= 20;
+            
+            bool hasLower = false, hasUpper = false, hasDigit = false, hasSymbol = false;
+            int typesCount = 0;
+
+            foreach (char c in password)
+            {
+                if (char.IsLower(c)) hasLower = true;
+                else if (char.IsUpper(c)) hasUpper = true;
+                else if (char.IsDigit(c)) hasDigit = true;
+                else if (!char.IsWhiteSpace(c)) hasSymbol = true;
+            }
+
+            if (hasLower) { score += 10; typesCount++; }
+            if (hasUpper) { score += 10; typesCount++; }
+            if (hasDigit) { score += 10; typesCount++; }
+            if (hasSymbol) { score += 10; typesCount++; }
+
+            if (typesCount == 1)
+            {
+                score = Math.Min(39, score);
+            }
+            else if (typesCount == 2)
+            {
+                score = Math.Min(59, score);
+            }
+
+            for (int i = 0; i < password.Length - 2; i++)
+            {
+                if (password[i] == password[i + 1] && password[i + 1] == password[i + 2])
+                {
+                    score -= 15;
+                }
+            }
+
+            string lowerPassword = password.ToLower();
+            if (lowerPassword.Contains("123") || lowerPassword.Contains("abc") || lowerPassword.Contains("qwe") || lowerPassword.Contains("password") || lowerPassword.Contains("admin"))
+            {
+                score -= 20;
+            }
+
+            return Math.Max(0, Math.Min(100, score));
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
