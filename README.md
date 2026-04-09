@@ -34,7 +34,7 @@ As this is an actively developed project, the following features are planned for
 - ✅️ **Asynchronous Processing (`async`/`await`):** To keep the UI fully responsive during the encryption of very large files.
 - ✅️ **Progress Bar Integration:** Visual feedback mapping the `IProgress` of the `CryptoStream` operations.
 - ✅️ **Drag & Drop Support:** Allow users to drag files directly from Windows Explorer into the application window.
-- [ ] **Password Strength Meter:** Real-time visual feedback on password complexity.
+- ✅️ **Password Strength Meter:** Real-time visual feedback on password complexity.
 
 ## How to Run locally
 1. Clone the repository: `git clone https://github.com/IonitaVlad31/IronVault.git`
