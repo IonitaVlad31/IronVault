@@ -110,6 +110,7 @@ namespace IronVault
 
                 FilePathTextBox.Text = string.Empty;
                 PasswordBox.Password = string.Empty;
+                PasswordVisibleBox.Text = string.Empty;
 
                 selectedFilePath = "";
             }
@@ -261,6 +262,32 @@ namespace IronVault
             }
 
             return Math.Max(0, Math.Min(100, score));
+        }
+
+        private void ShowPasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ShowPasswordButton.IsChecked == true)
+            {
+                PasswordVisibleBox.Text = PasswordBox.Password;
+                PasswordVisibleBox.Visibility = Visibility.Visible;
+                PasswordBox.Visibility = Visibility.Collapsed;
+
+            }
+            else
+            {
+                PasswordBox.Password = PasswordVisibleBox.Text;
+                PasswordVisibleBox.Visibility = Visibility.Collapsed;
+                PasswordBox.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void PasswordVisibleBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (PasswordVisibleBox.Visibility == Visibility.Visible)
+            {
+                PasswordBox.Password = PasswordVisibleBox.Text;
+                UpdatePasswordStrength(PasswordVisibleBox.Text);
+            }
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
