@@ -35,8 +35,9 @@ As this is an actively developed project, the following features are planned for
 - ✅️ **Progress Bar Integration:** Visual feedback mapping the `IProgress` of the `CryptoStream` operations.
 - ✅️ **Drag & Drop Support:** Allow users to drag files directly from Windows Explorer into the application window.
 - ✅️ **Password Strength Meter:** Real-time visual feedback on password complexity.
-- ✅️ **Password "Eye" Button:** Allows users to see the password they're typing if they want to.
-- [ ] **File deletion CheckBox:** Allows users to delete the file they just encrypted/decrypted from the source if they want to.
+- ✅️ **Password "Eye" Button:** Allow users to see the password they're typing if they want to.
+- ✅️ **File deletion CheckBox:** Allow users to delete the file they just encrypted from the source if they want to.
+- [ ] **Folder Encryption & Decryption** Allow users to securely pack and encrypt entire folders into a single .vault file. The application will automatically handle the temporary zipping and unzipping processes behind the scenes, ensuring a seamless and clean user experience.
 
 ## How to Run locally
 1. Clone the repository: `git clone https://github.com/IonitaVlad31/IronVault.git`
