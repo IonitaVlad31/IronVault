@@ -35,7 +35,7 @@ As this is an actively developed project, the following features are planned for
 - ✅️ **Progress Bar Integration:** Visual feedback mapping the `IProgress` of the `CryptoStream` operations.
 - ✅️ **Drag & Drop Support:** Allow users to drag files directly from Windows Explorer into the application window.
 - ✅️ **Password Strength Meter:** Real-time visual feedback on password complexity.
-- [ ] **Password "Eye" Button:** Allows users to see the password they're typing if they want to.
+- ✅️ **Password "Eye" Button:** Allows users to see the password they're typing if they want to.
 - [ ] **File deletion CheckBox:** Allows users to delete the file they just encrypted/decrypted from the source if they want to.
 
 ## How to Run locally
