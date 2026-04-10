@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using System.Configuration.Internal;
 
 namespace IronVault
 {
@@ -37,6 +38,20 @@ namespace IronVault
             {
                 selectedFilePath = openFileDialog.FileName;
                 FilePathTextBox.Text = selectedFilePath;
+                UpdateCheckBoxState();
+            }
+        }
+
+        private void UpdateCheckBoxState()
+        {
+            if (selectedFilePath.EndsWith(".vault", StringComparison.OrdinalIgnoreCase))
+            {
+                DeleteOriginalCheckBox.IsEnabled = false;
+                DeleteOriginalCheckBox.IsChecked = false;
+            }
+            else
+            {
+                DeleteOriginalCheckBox.IsEnabled = true;
             }
         }
 
@@ -86,12 +101,24 @@ namespace IronVault
                 {
                     string outputFile = selectedFilePath.Replace(".vault", "");
                     await CryptoEngine.DecryptFileAsync(selectedFilePath, outputFile, password, progressHandler);
+
+                    if (DeleteOriginalCheckBox.IsChecked == true)
+                    {
+                        System.IO.File.Delete(selectedFilePath);
+                    }
+
                     MessageBox.Show($"File decrypted successfully!\n\nSaved at:\n{outputFile}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
                     string outputFile = selectedFilePath + ".vault";
                     await CryptoEngine.EncryptFileAsync(selectedFilePath, outputFile, password, progressHandler);
+                    
+                    if (DeleteOriginalCheckBox.IsChecked == true)
+                    {
+                        System.IO.File.Delete(selectedFilePath);
+                    }
+                    
                     MessageBox.Show($"File encypted successfully!\n\nSaved at:\n{outputFile}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
@@ -111,6 +138,9 @@ namespace IronVault
                 FilePathTextBox.Text = string.Empty;
                 PasswordBox.Password = string.Empty;
                 PasswordVisibleBox.Text = string.Empty;
+
+                DeleteOriginalCheckBox.IsChecked = false;
+                DeleteOriginalCheckBox.IsEnabled = true;
 
                 selectedFilePath = "";
             }
@@ -154,6 +184,7 @@ namespace IronVault
                 {
                     selectedFilePath = files[0];
                     FilePathTextBox.Text = selectedFilePath;
+                    UpdateCheckBoxState();
                 }
             }
         }

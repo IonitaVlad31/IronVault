@@ -139,7 +139,7 @@
                 </ToggleButton>
             </Grid>
 
-            <StackPanel Margin="0,5,0,25">
+            <StackPanel Margin="0,5,0,15">
                 <ProgressBar x:Name="PasswordStrengthBar"
                              Height="6"
                              Value="0"
@@ -154,6 +154,13 @@
                            Margin="0,2,0,0"
                            HorizontalAlignment="Right"/>
             </StackPanel>
+
+            <CheckBox x:Name="DeleteOriginalCheckBox"
+                      Content="Delete the original file after processing (only for encryption)"
+                      Foreground="DimGray"
+                      FontSize="14"
+                      Cursor="Hand"
+                      Margin="0,0,0,20"/>
 
             <Button x:Name="GoButton" 
                     Content="ENCRYPT / DECRYPT" 
