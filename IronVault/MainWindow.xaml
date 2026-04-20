@@ -73,10 +73,11 @@
         </Border>
 
         <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Width="600">
-            <TextBlock Text="Select File" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="DimGray"/>
+            <TextBlock Text="Select File or Folder" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="DimGray"/>
             <Grid Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
@@ -96,13 +97,22 @@
                          Drop="FilePathTextBox_Drop"/>
 
                 <Button x:Name="SelectFileButton" 
-                        Content="..." 
+                        Content="📄" 
                         Grid.Column="1" 
-                        Width="50" 
+                        Width="40" 
                         Height="40" 
-                        Margin="10,0,0,0" 
+                        Margin="5,0,0,0" 
                         Click="SelectFileButton_Click"
-                        ToolTip="Browse for file"/>
+                        ToolTip="Browse for a File"/>
+                
+                <Button x:Name="SelectFolderButton"
+                        Content="📁"
+                        Grid.Column="2"
+                        Width="40"
+                        Height="40"
+                        Margin="5,0,0,0"
+                        Click="SelectFolderButton_Click"
+                        ToolTip="Browse for a Folder"/>
             </Grid>
 
             <TextBlock Text="Password" FontWeight="SemiBold" Margin="0,0,0,5" Foreground="DimGray"/>

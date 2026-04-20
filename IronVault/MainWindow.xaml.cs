@@ -11,9 +11,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Configuration.Internal;
+using System.IO;
+using System.IO.Compression;
 
 namespace IronVault
 {
@@ -37,6 +38,19 @@ namespace IronVault
             if (openFileDialog.ShowDialog() == true)
             {
                 selectedFilePath = openFileDialog.FileName;
+                FilePathTextBox.Text = selectedFilePath;
+                UpdateCheckBoxState();
+            }
+        }
+
+        private void SelectFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFolderDialog openFolderDialog = new OpenFolderDialog();
+            openFolderDialog.Title = "Select a folder to encrypt";
+
+            if (openFolderDialog.ShowDialog() == true)
+            {
+                selectedFilePath = openFolderDialog.FolderName;
                 FilePathTextBox.Text = selectedFilePath;
                 UpdateCheckBoxState();
             }
@@ -97,29 +111,66 @@ namespace IronVault
 
             try
             {
-                if (selectedFilePath.EndsWith(".vault"))
+                if (selectedFilePath.EndsWith(".folder.vault"))
+                {
+                    string outputFolder = selectedFilePath.Replace(".folder.vault", "");
+                    string tempZipPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".zip");
+
+                    await CryptoEngine.DecryptFileAsync(selectedFilePath, tempZipPath, password, progressHandler);
+                    ZipFile.ExtractToDirectory(tempZipPath, outputFolder, true);
+
+                    File.Delete(tempZipPath);
+
+                    if (DeleteOriginalCheckBox.IsChecked == true)
+                    {
+                        File.Delete(selectedFilePath);
+                    }
+
+                    MessageBox.Show($"Folder decrypted successfully!\n\nSaved at:\n{outputFolder}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else if (selectedFilePath.EndsWith(".vault"))
                 {
                     string outputFile = selectedFilePath.Replace(".vault", "");
                     await CryptoEngine.DecryptFileAsync(selectedFilePath, outputFile, password, progressHandler);
 
                     if (DeleteOriginalCheckBox.IsChecked == true)
                     {
-                        System.IO.File.Delete(selectedFilePath);
+                        File.Delete(selectedFilePath);
                     }
 
                     MessageBox.Show($"File decrypted successfully!\n\nSaved at:\n{outputFile}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
-                    string outputFile = selectedFilePath + ".vault";
-                    await CryptoEngine.EncryptFileAsync(selectedFilePath, outputFile, password, progressHandler);
-                    
-                    if (DeleteOriginalCheckBox.IsChecked == true)
+                    if (Directory.Exists(selectedFilePath))
                     {
-                        System.IO.File.Delete(selectedFilePath);
+                        string tempZipPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".zip");
+                        string outputFile = selectedFilePath + ".folder.vault";
+
+                        ZipFile.CreateFromDirectory(selectedFilePath, tempZipPath);
+                        await CryptoEngine.EncryptFileAsync(tempZipPath, outputFile, password, progressHandler);
+
+                        File.Delete(tempZipPath);
+
+                        if (DeleteOriginalCheckBox.IsChecked == true)
+                        {
+                            Directory.Delete(selectedFilePath, true);
+                        }
+
+                        MessageBox.Show($"Folder encypted successfully!\n\nSaved at:\n{outputFile}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
-                    
-                    MessageBox.Show($"File encypted successfully!\n\nSaved at:\n{outputFile}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+                    else if (File.Exists(selectedFilePath))
+                    {
+                        string outputFile = selectedFilePath + ".vault";
+                        await CryptoEngine.EncryptFileAsync(selectedFilePath, outputFile, password, progressHandler);
+
+                        if (DeleteOriginalCheckBox.IsChecked == true)
+                        {
+                            System.IO.File.Delete(selectedFilePath);
+                        }
+
+                        MessageBox.Show($"File encypted successfully!\n\nSaved at:\n{outputFile}", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
                 }
             }
             catch (CryptographicException)
